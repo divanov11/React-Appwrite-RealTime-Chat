@@ -15,24 +15,20 @@ const Room = () => {
     useEffect(() => {
         getMessages();
       
-        const handleEvents = response => {
-          if (response.events.includes('databases.*.collections.*.documents.*.create')) {
-            setMessages(prevMessages => [response.payload, ...prevMessages]);
-          }
+        const unsubscribe = client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`, response => {
 
-          if(response.events.includes('databases.*.collections.*.documents.*.delete')) {
-            //setMessages(messages.filter(message => message.$id !== response.payload.$id))
-            setMessages((prevMessages) => prevMessages.filter((message) => message.$id !== response.payload.$id)
-            );
-        }
+            if(response.events.includes("databases.*.collections.*.documents.*.create")){
+                console.log('A MESSAGE WAS CREATED')
+                setMessages(prevState => [response.payload, ...prevState])
+            }
 
+            if(response.events.includes("databases.*.collections.*.documents.*.delete")){
+                console.log('A MESSAGE WAS DELETED!!!')
+                setMessages(prevState => prevState.filter(message => message.$id !== response.payload.$id))
+            }
+        });
 
-        };
-      
-        const unsubscribe = client.subscribe(
-          `databases.${DATABASE_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`,
-          handleEvents
-        );
+        console.log('unsubscribe:', unsubscribe)
       
         return () => {
           unsubscribe();
@@ -58,7 +54,6 @@ const Room = () => {
         console.log('MESSAGE:', messageBody)
 
         const permissions = [
-            // Permission.read(Role.user(user.$id)),
             Permission.write(Role.user(user.$id)),
           ]
 
@@ -78,15 +73,15 @@ const Room = () => {
 
         console.log('RESPONSE:', response)
 
-        //setMessages([response,...messages])
+        // setMessages(prevState => [response, ...prevState])
 
         setMessageBody('')
 
     }
 
-    const deletePost = async (id) => {
+    const deleteMessage = async (id) => {
         await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, id);
-        //setMessages(messages.filter(message => message.$id !== id))
+        //setMessages(prevState => prevState.filter(message => message.$id !== message_id))
      } 
 
   return (
@@ -126,7 +121,7 @@ const Room = () => {
                         </p>
 
                         {message.$permissions.includes(`delete(\"user:${user.$id}\")`) && (
-                            <Trash2 className="delete--btn" onClick={() => {deletePost(message.$id)}}/>
+                            <Trash2 className="delete--btn" onClick={() => {deleteMessage(message.$id)}}/>
                             
                         )}
                     </div>

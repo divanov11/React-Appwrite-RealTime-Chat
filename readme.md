@@ -1,6 +1,6 @@
 # Real Time Chat App With React JS and Appwrite
 
-A chat app with realtime capabilities that utilizes Appwrite on the backend. 
+A chat app with real-time capabilities that utilizes Appwrite on the backend. 
 
 > Tutorial Link Will be added here when posted.
 
@@ -8,14 +8,14 @@ A chat app with realtime capabilities that utilizes Appwrite on the backend.
 
 ### Getting Started
 
-After cloning repo ensure you complete nessesary installations
+After cloning the repo ensure you complete the necessary installations
 
 ```
 $ npm install
 $ npm run dev
 ```
 
-Create a new `.env` folder and create the nessesary variables based on the `src/appwriteConfig.js` file. Appwrite setup will be covered in next step.
+Create a new `.env` folder and create the necessary variables based on the `src/appwriteConfig.js` file. Appwrite setup will be covered in the next step.
 
 ```js
 //appwrite.Config.js
@@ -33,7 +33,7 @@ const client = new Client()
 
 **Setting Up Appwrite Account**
 
-Setup a local instance of Appwrite or create an account with Appwrite cloud.
+Set up a local instance of Appwrite or create an account with Appwrite Cloud.
 
 In your appwrite console create a project and database.
 
@@ -43,4 +43,5 @@ In your appwrite console create a project and database.
     - body
 2. From your `messages` collection, go to the "settings" --> "Update Permissions" --> "+ Add Role" and select "Any". Give this user type "Create", "Read", "Update" and "Delete" permissions.
 
-Once you've setup your project you should now be able to update all nessesary env variables run your development server to view the output.
+Once you've set up your project you should be able to update all necessary env variables. 
+Run your development server to view the output.

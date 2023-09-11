@@ -4,13 +4,10 @@ import { ID, Query, Permission, Role} from 'appwrite';
 import Header from '../components/Header';
 import { useAuth } from '../utils/AuthContext';
 import {Trash2} from 'react-feather'
-import {Picker} from 'emoji-picker-react';// remember to install emoji picker
 
 
 const Room = () => {
     const [messageBody, setMessageBody] = useState('')
-    const [chosenEmoji, setchosenEmoji] = useState(null)
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false)
     const [messages, setMessages] = useState([])
     const {user} = useAuth()
 
@@ -55,7 +52,7 @@ const Room = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         console.log('MESSAGE:', messageBody)
-      const messageWithEmoji = `${messageBody}`
+
         const permissions = [
             Permission.write(Role.user(user.$id)),
           ]
@@ -63,7 +60,7 @@ const Room = () => {
         const payload = {
             user_id:user.$id,
             username:user.name,
-            body:messageWithEmoji
+            body:messageBody
         }
 
         const response = await databases.createDocument(
@@ -79,22 +76,13 @@ const Room = () => {
         // setMessages(prevState => [response, ...prevState])
 
         setMessageBody('')
-         setchosenEmoji(null)
+
     }
 
     const deleteMessage = async (id) => {
         await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, id);
         //setMessages(prevState => prevState.filter(message => message.$id !== message_id))
      } 
-
-     function handleEmojiClick(event,emojiObject){
-       const selectedEmoji = emojiObject.emoji
-       setchosenEmoji(selectedEmoji) 
-        setMessageBody((prevMessage)=> prevMessage + selectedEmoji)
-     }
-     function toggleEmoji(){
-        setShowEmojiPicker(!showEmojiPicker)
-     }
 
   return (
     <main className="container">
@@ -106,16 +94,10 @@ const Room = () => {
                 <textarea 
                     required 
                     maxlength="250"
-                    placeholder= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Say something...'
+                    placeholder="Say something..." 
                     onChange={(e) => {setMessageBody(e.target.value)}}
                     value={messageBody}
                     ></textarea>
-                    <div><span onClick={toggleEmoji} style = {{position:'relative',top:'-67px', cursor:'pointer', marginLeft:'150px'}}>
-    🙂</span></div>
-    {showPicker && (<div className="emojiPicker">
-
-        <Picker onEmojiClick={handleEmojiClick}/>
-    </div>)}
             </div>
 
             <div className="send-btn--wrapper">
@@ -145,7 +127,7 @@ const Room = () => {
                     </div>
 
                     <div className={"message--body" + (message.user_id === user.$id ? ' message--body--owner' : '')}>
-                        <span dangerouslySetInnerHTML={{ __html: message.body }}/>
+                        <span>{message.body}</span>
                         
                     </div>
                         
